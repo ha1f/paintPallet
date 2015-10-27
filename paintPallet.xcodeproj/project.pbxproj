@@ -14,6 +14,8 @@
 		552787E11BDB8C6400F05DCA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 552787DF1BDB8C6400F05DCA /* LaunchScreen.storyboard */; };
 		552787EC1BDB8C6400F05DCA /* paintPalletTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552787EB1BDB8C6400F05DCA /* paintPalletTests.swift */; };
 		552787F71BDB8C6400F05DCA /* paintPalletUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552787F61BDB8C6400F05DCA /* paintPalletUITests.swift */; };
+		552788051BDBAE8B00F05DCA /* DrawableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552788041BDBAE8B00F05DCA /* DrawableView.swift */; };
+		552788071BDBAEC500F05DCA /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552788061BDBAEC500F05DCA /* Line.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +49,8 @@
 		552787F21BDB8C6400F05DCA /* paintPalletUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = paintPalletUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		552787F61BDB8C6400F05DCA /* paintPalletUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = paintPalletUITests.swift; sourceTree = "<group>"; };
 		552787F81BDB8C6400F05DCA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		552788041BDBAE8B00F05DCA /* DrawableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawableView.swift; sourceTree = "<group>"; };
+		552788061BDBAEC500F05DCA /* Line.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +107,8 @@
 				552787DD1BDB8C6400F05DCA /* Assets.xcassets */,
 				552787DF1BDB8C6400F05DCA /* LaunchScreen.storyboard */,
 				552787E21BDB8C6400F05DCA /* Info.plist */,
+				552788041BDBAE8B00F05DCA /* DrawableView.swift */,
+				552788061BDBAEC500F05DCA /* Line.swift */,
 			);
 			path = paintPallet;
 			sourceTree = "<group>";
@@ -257,7 +263,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				552787D91BDB8C6400F05DCA /* ViewController.swift in Sources */,
+				552788071BDBAEC500F05DCA /* Line.swift in Sources */,
 				552787D71BDB8C6400F05DCA /* AppDelegate.swift in Sources */,
+				552788051BDBAE8B00F05DCA /* DrawableView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

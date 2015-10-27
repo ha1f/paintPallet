@@ -9,10 +9,15 @@
 import UIKit
 
 class ViewController: UIViewController {
+    
+    var palette: DrawableView! = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        palette = DrawableView(frame: self.view.frame)
+        self.view.addSubview(palette)
     }
 
     override func didReceiveMemoryWarning() {
