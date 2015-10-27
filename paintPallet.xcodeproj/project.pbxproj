@@ -15,7 +15,7 @@
 		552787EC1BDB8C6400F05DCA /* paintPalletTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552787EB1BDB8C6400F05DCA /* paintPalletTests.swift */; };
 		552787F71BDB8C6400F05DCA /* paintPalletUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552787F61BDB8C6400F05DCA /* paintPalletUITests.swift */; };
 		552788051BDBAE8B00F05DCA /* DrawableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552788041BDBAE8B00F05DCA /* DrawableView.swift */; };
-		552788071BDBAEC500F05DCA /* Line.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552788061BDBAEC500F05DCA /* Line.swift */; };
+		552788071BDBAEC500F05DCA /* Path.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552788061BDBAEC500F05DCA /* Path.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,7 +50,7 @@
 		552787F61BDB8C6400F05DCA /* paintPalletUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = paintPalletUITests.swift; sourceTree = "<group>"; };
 		552787F81BDB8C6400F05DCA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		552788041BDBAE8B00F05DCA /* DrawableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawableView.swift; sourceTree = "<group>"; };
-		552788061BDBAEC500F05DCA /* Line.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Line.swift; sourceTree = "<group>"; };
+		552788061BDBAEC500F05DCA /* Path.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Path.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,7 +108,7 @@
 				552787DF1BDB8C6400F05DCA /* LaunchScreen.storyboard */,
 				552787E21BDB8C6400F05DCA /* Info.plist */,
 				552788041BDBAE8B00F05DCA /* DrawableView.swift */,
-				552788061BDBAEC500F05DCA /* Line.swift */,
+				552788061BDBAEC500F05DCA /* Path.swift */,
 			);
 			path = paintPallet;
 			sourceTree = "<group>";
@@ -263,7 +263,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				552787D91BDB8C6400F05DCA /* ViewController.swift in Sources */,
-				552788071BDBAEC500F05DCA /* Line.swift in Sources */,
+				552788071BDBAEC500F05DCA /* Path.swift in Sources */,
 				552787D71BDB8C6400F05DCA /* AppDelegate.swift in Sources */,
 				552788051BDBAE8B00F05DCA /* DrawableView.swift in Sources */,
 			);
@@ -492,6 +492,7 @@
 				552787FD1BDB8C6400F05DCA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		552787FE1BDB8C6400F05DCA /* Build configuration list for PBXNativeTarget "paintPalletTests" */ = {
 			isa = XCConfigurationList;
@@ -500,6 +501,7 @@
 				552788001BDB8C6400F05DCA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		552788011BDB8C6400F05DCA /* Build configuration list for PBXNativeTarget "paintPalletUITests" */ = {
 			isa = XCConfigurationList;
@@ -508,6 +510,7 @@
 				552788031BDB8C6400F05DCA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
