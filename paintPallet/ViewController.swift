@@ -15,8 +15,10 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        palette = DrawableView(frame: self.view.frame)
-        self.view.addSubview(palette)
+        if palette == nil {
+            palette = DrawableView(frame: self.view.frame)
+            self.view.addSubview(palette)
+        }
     }
 
     override func didReceiveMemoryWarning() {
