@@ -101,11 +101,11 @@
 			children = (
 				552787D61BDB8C6400F05DCA /* AppDelegate.swift */,
 				552787D81BDB8C6400F05DCA /* ViewController.swift */,
+				552788041BDBAE8B00F05DCA /* DrawableView.swift */,
 				552787DA1BDB8C6400F05DCA /* Main.storyboard */,
 				552787DD1BDB8C6400F05DCA /* Assets.xcassets */,
 				552787DF1BDB8C6400F05DCA /* LaunchScreen.storyboard */,
 				552787E21BDB8C6400F05DCA /* Info.plist */,
-				552788041BDBAE8B00F05DCA /* DrawableView.swift */,
 			);
 			path = paintPallet;
 			sourceTree = "<group>";

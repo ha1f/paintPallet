@@ -8,87 +8,122 @@
 
 import UIKit
 
+protocol DrawableViewDelegate {
+    func onUpdateDrawableView()
+    func onFinishSave()
+}
+
+protocol DrawableViewPart {
+    func drawOnContext(context: CGContextRef)
+}
+
 class DrawableView: UIView {
     
-    class Line {
+    class Line: DrawableViewPart {
         var points: [CGPoint]
-        var color :UIColor
+        var color :CGColorRef
         var width: CGFloat
         
-        init(color: UIColor, width: CGFloat){
+        init(color: CGColorRef, width: CGFloat){
             self.color = color
             self.width = width
             self.points = []
         }
         
-        func configurePath(path: UIBezierPath) {
-            path.lineCapStyle = CGLineCap.Round
-            
-            // 2点以上ないと線描画する必要なし
-            if self.points.count > 1 {
-                // 起点
-                path.moveToPoint(self.points.first!)
-                for point in self.points[1...(self.points.count-1)] {
-                    path.addLineToPoint(point)
-                }
-            }
-            path.lineWidth = self.width// ライン幅
-        }
-        
-        // BezierPathを生成
-        func getBezierPath() -> UIBezierPath {
-            let path = UIBezierPath()
-            path.lineCapStyle = CGLineCap.Round
-            
-            // 2点以上ないと線描画する必要なし
-            if self.points.count > 1 {
-                // 起点
-                path.moveToPoint(self.points.first!)
-                for point in self.points[1...(self.points.count-1)] {
-                    path.addLineToPoint(point)
-                }
-            }
-            path.lineWidth = self.width// ライン幅
-            
-            //configurePath(path)
-            
-            return path
-        }
-        
-        func drawOnContext(context: CGContextRef) {
+        func drawOnContext(context: CGContextRef){
             UIGraphicsPushContext(context)
-            let path = self.getBezierPath()
             
-            self.color.setStroke()// 色設定
-            path.stroke()// 描画
+            CGContextSetStrokeColorWithColor(context, self.color)
+            CGContextSetLineWidth(context, self.width)
+            CGContextSetLineCap(context, CGLineCap.Round)
+            
+            // 2点以上ないと線描画する必要なし
+            if self.points.count > 1 {
+                for (index, point) in self.points.enumerate() {
+                    if index == 0 {
+                        CGContextMoveToPoint(context, point.x, point.y)
+                    } else {
+                        CGContextAddLineToPoint(context, point.x, point.y)
+                    }
+                }
+            } else {
+                Dot(line: self).drawOnContext(context)
+            }
+            CGContextStrokePath(context)
             
             UIGraphicsPopContext()
         }
         
-        func getImage(maxSize: CGSize) -> UIImage {
-            UIGraphicsBeginImageContextWithOptions(maxSize, false, 0)
-            let context = UIGraphicsGetCurrentContext()
-            self.drawOnContext(context!)
-            
-            let currentImage = UIGraphicsGetImageFromCurrentImageContext()
-            UIGraphicsEndImageContext()
-            return currentImage
+        // 更新分だけ描画したい時用
+        func drawLastlineOnContext(context: CGContextRef) {
+            if self.points.count > 1 {
+                UIGraphicsPushContext(context)
+                CGContextSetStrokeColorWithColor(context, self.color)
+                CGContextSetLineWidth(context, self.width)
+                CGContextSetLineCap(context, CGLineCap.Round)
+                
+                let startPoint = self.points[self.points.endIndex-2]
+                let endPoint = self.points.last!
+                CGContextMoveToPoint(context, startPoint.x, startPoint.y)
+                CGContextAddLineToPoint(context, endPoint.x, endPoint.y)
+                
+                CGContextStrokePath(context)
+                UIGraphicsPopContext()
+            } else if self.points.count > 0 {
+                Dot(line: self).drawOnContext(context)
+            }
+        }
+    }
+    
+    class Dot: DrawableViewPart {
+        var pos: CGPoint
+        var radius: CGFloat
+        var color: CGColorRef
+        
+        init(pos: CGPoint, radius: CGFloat, color: CGColorRef) {
+            self.radius = radius
+            self.pos = pos
+            self.color = color
+        }
+        
+        init(line: Line) {
+            self.pos = line.points.first!
+            self.radius = line.width
+            self.color = line.color
+        }
+        
+        func drawOnContext(context: CGContextRef){
+            UIGraphicsPushContext(context)
+            CGContextSetFillColorWithColor(context, self.color)
+            CGContextAddEllipseInRect(context, CGRectMake(pos.x-(radius/2), pos.y-(radius/2), radius, radius));
+            CGContextFillPath(context);
+            UIGraphicsPopContext()
         }
     }
     
     struct DrawableViewSetting {
-        var lineColor: UIColor = UIColor.redColor()
+        var lineColor: CGColorRef = UIColor.redColor().CGColor
         var lineWidth: CGFloat = 5
-        
-        init() {
-        }
     }
     
-    var undoQue: [UIImageView] = []
+    // DrawableViewParts
+    var parts: [DrawableViewPart] = []
+    // 描画中のLine
     var currentLine: Line? = nil
-    var currentPath: UIBezierPath! = UIBezierPath()
+    // これまでに描画したimage
+    private var currentImage: UIImage? = nil
+    // delegate
+    var delegate:DrawableViewDelegate? = nil
     
-    var currentSetting = DrawableViewSetting()
+    private var currentSetting = DrawableViewSetting()
+    
+    func setLineColor(color: CGColorRef) {
+        currentSetting.lineColor = color
+    }
+    
+    func setLineWidth(width: CGFloat) {
+        currentSetting.lineWidth = width
+    }
     
     //初期化
     required init(coder aDecoder: NSCoder) {
@@ -97,27 +132,23 @@ class DrawableView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        currentSetting.lineColor = UIColor.redColor()
+        currentSetting.lineColor = UIColor.redColor().CGColor
         currentSetting.lineWidth = 5
-        
-        let button = UIButton(frame: CGRectMake(0, 0, 100, 100))
-        self.addSubview(button)
-        button.backgroundColor = UIColor.yellowColor()
-        button.addTarget(self, action: "undo", forControlEvents: .TouchUpInside)
     }
     
     func undo() {
-        if self.undoQue.count > 0 {
-            let imageView = self.undoQue.removeLast()
-            imageView.removeFromSuperview()
+        if !self.parts.isEmpty {
+            self.parts.removeLast()
+            requireRedraw()
         }
     }
     
     // タッチされた
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         let point = touches.first!.locationInView(self)
-        currentLine = Line(color: currentSetting.lineColor, width: currentSetting.lineWidth)
+        currentLine = Line(color: self.currentSetting.lineColor, width: self.currentSetting.lineWidth)
         currentLine?.points.append(point)
+        self.setNeedsDisplay()
     }
     
     // タッチが動いた
@@ -129,32 +160,77 @@ class DrawableView: UIView {
     
     // タッチが終わった
     override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        // imageViewにはめて、undoQueに追加する
-        let imageView = UIImageView(frame: self.bounds)
-        imageView.backgroundColor = UIColor.clearColor()
-        imageView.image = currentLine?.getImage(self.bounds.size)
-        undoQue.append(imageView)
-        self.addSubview(imageView)
+        // 2点以上のlineしか保存する必要なし
+        if currentLine?.points.count > 1 {
+            parts.append(currentLine!)
+        } else {
+            self.parts.append(Dot(line: currentLine!))
+        }
         
         currentLine = nil
+    }
     
+    private func requireRedraw() {
+        self.currentImage = nil
         self.setNeedsDisplay()
+    }
+    
+    // UIImageとして取得
+    func getCurrentImage() -> UIImage {
+        // nilだったら再度描画させる
+        if self.currentImage == nil {
+            UIGraphicsBeginImageContextWithOptions(self.bounds.size, false, 0)
+            let context = UIGraphicsGetCurrentContext()
+            for part in parts {
+                part.drawOnContext(context!)
+            }
+            if let line = currentLine {
+                line.drawOnContext(context!)
+            }
+            self.currentImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+        }
+        return self.currentImage!
+    }
+    
+    func updateCurrentImage() {
+        UIGraphicsBeginImageContextWithOptions(self.bounds.size, false, 0)
+        // 新しいcontext
+        let imageContext = UIGraphicsGetCurrentContext()
+        // 今までのimageを取得して描画
+        self.getCurrentImage().drawInRect(self.bounds)
+        // 追加分を描画
+        if let line = currentLine {
+            line.drawLastlineOnContext(imageContext!)
+        }
+        // 更新
+        self.currentImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+    }
+    
+    func save() {
+        // 念のため再描画
+        updateCurrentImage()
+        UIImageWriteToSavedPhotosAlbum(self.currentImage!, self, "image:didFinishSavingWithError:contextInfo:", nil)
+        
+    }
+    
+    func image(image: UIImage, didFinishSavingWithError error: NSError!, contextInfo: UnsafeMutablePointer<Void>) {
+        if error != nil {
+            //プライバシー設定不許可など書き込み失敗時は -3310 (ALAssetsLibraryDataUnavailableError)
+            print("DrawableView:Error -> " + String(error.code))
+        } else {
+            delegate?.onFinishSave()
+        }
     }
     
     //描画設定
     override func drawRect(rect: CGRect) {
-        let context = UIGraphicsGetCurrentContext()
+        delegate?.onUpdateDrawableView()
         
-        if let line = currentLine {
-            line.configurePath(self.currentPath)
-            line.color.setStroke()// 色設定
-            self.currentPath.stroke()
-            //line.drawOnContext(context!)
-        } else {
-            //CGContextSetFillColorWithColor(context, UIColor.brownColor().CGColor)
-            //CGContextFillRect(context, self.bounds)
-            CGContextClearRect(context, self.bounds)
-            print("clear context")
-        }
+        let _ = UIGraphicsGetImageFromCurrentImageContext()
+        
+        updateCurrentImage()
+        self.currentImage?.drawInRect(self.bounds)
     }
 }
