@@ -101,6 +101,18 @@ class DrawableView: UIView {
         }
     }
     
+    class Image: DrawableViewPart {
+        var image: UIImage
+        init(image: UIImage) {
+            self.image = image
+        }
+        func drawOnContext(context: CGContextRef){
+            UIGraphicsPushContext(context)
+            image.drawInRect(CGRect(origin: CGPointZero, size: image.size))
+            UIGraphicsPopContext()
+        }
+    }
+    
     struct DrawableViewSetting {
         var lineColor: CGColorRef = UIColor.redColor().CGColor
         var lineWidth: CGFloat = 5
@@ -128,12 +140,14 @@ class DrawableView: UIView {
     //初期化
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)!
+        
+        self.parts = [Image(image: UIImage())]
+        currentSetting.lineColor = UIColor.redColor().CGColor
+        currentSetting.lineWidth = 5
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        currentSetting.lineColor = UIColor.redColor().CGColor
-        currentSetting.lineWidth = 5
     }
     
     func undo() {
@@ -210,6 +224,28 @@ class DrawableView: UIView {
     
     func clear() {
         self.parts = []
+        self.requireRedraw()
+    }
+    
+    private func getResizedImage(image: UIImage, size: CGSize) -> UIImage {
+        UIGraphicsBeginImageContext(size)
+        image.drawInRect(CGRect(origin: CGPointZero, size: size))
+        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return resizedImage
+    }
+    
+    func setBackgroundImage(image: UIImage) {
+        let resizedImage = getResizedImage(image, size: CGSizeMake(self.bounds.width, self.bounds.height))
+        
+        let backgroundImage = Image(image: resizedImage)
+        
+        if let part = self.parts.first where part is Image {
+            self.parts[0] = backgroundImage
+        } else {
+            self.parts.insert(backgroundImage, atIndex: 0)
+        }
+        
         self.requireRedraw()
     }
     
