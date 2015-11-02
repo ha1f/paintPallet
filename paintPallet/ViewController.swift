@@ -14,6 +14,7 @@ class ViewController: UIViewController, DrawableViewDelegate {
     
     var undoButton: UIButton! = nil
     var saveButton: UIButton! = nil
+    //var loadButton: UIButton! = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,9 +51,9 @@ class ViewController: UIViewController, DrawableViewDelegate {
         /*if loadButton == nil {
             loadButton = UIButton(frame: CGRectMake(buttonWidth*2, 0, buttonWidth, 100))
             loadButton.backgroundColor = UIColor.greenColor()
-            loadButton.setTitle("save", forState: .Normal)
+            loadButton.setTitle("clear", forState: .Normal)
             loadButton.setTitleColor(UIColor.brownColor(), forState: .Normal)
-            loadButton.addTarget(drawableView, action: "load", forControlEvents: .TouchUpInside)
+            loadButton.addTarget(drawableView, action: "clear", forControlEvents: .TouchUpInside)
             self.view.addSubview(loadButton)
         }*/
         

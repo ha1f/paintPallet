@@ -208,6 +208,11 @@ class DrawableView: UIView {
         UIGraphicsEndImageContext()
     }
     
+    func clear() {
+        self.parts = []
+        self.requireRedraw()
+    }
+    
     func save() {
         // 念のため再描画
         updateCurrentImage()
